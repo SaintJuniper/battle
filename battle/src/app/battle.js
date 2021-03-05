@@ -1,5 +1,5 @@
 // --------------------------------------------------------------- //
-export function battleTime(player, opponent) {
+export function battleTime(player, opponent, flag) {
   // Global boards
   var boardA = [];
   var boardB = [];
@@ -19,7 +19,10 @@ export function battleTime(player, opponent) {
 
     // Your board
     for (let i = 0; i < myCards.length; i++) {
-      addToBoard(boardA, i, { attack: myCards[i].attack, health: myCards[i].health });
+      addToBoard(boardA, i, {
+        attack: myCards[i].attack,
+        health: myCards[i].health,
+      });
     }
 
     // Enemy board
@@ -161,7 +164,7 @@ export function battleTime(player, opponent) {
   }
 
   function simulateCombats() {
-    let nSims = 10;
+    let nSims = 10000;
     let winTally = 0;
     let loseTally = 0;
     let drawTally = 0;
@@ -183,10 +186,10 @@ export function battleTime(player, opponent) {
       }
     }
 
-    let EV = (winTally / nSims + 0.5 * (drawTally / nSims)).toFixed(3);
-    let winPercent = ((100 * winTally) / nSims).toFixed(3);
-    let lossPercent = ((100 * loseTally) / nSims).toFixed(3);
-    let drawPercent = ((100 * drawTally) / nSims).toFixed(3);
+    let EV = (winTally / nSims + 0.5 * (drawTally / nSims)).toFixed(2);
+    let winPercent = ((100 * winTally) / nSims).toFixed(2);
+    let lossPercent = ((100 * loseTally) / nSims).toFixed(2);
+    let drawPercent = ((100 * drawTally) / nSims).toFixed(2);
 
     console.log(`Current order of minions: `);
     console.log(`Value: ${EV}`);
@@ -198,7 +201,7 @@ export function battleTime(player, opponent) {
   }
 
   function simulateCombatsWithSeed(seed) {
-    let nSims = 10000;
+    let nSims = 1000;
     let winTally = 0;
     let loseTally = 0;
     let drawTally = 0;
@@ -220,10 +223,10 @@ export function battleTime(player, opponent) {
       }
     }
 
-    let EV = (winTally / nSims + 0.5 * (drawTally / nSims)).toFixed(3);
-    let winPercent = ((100 * winTally) / nSims).toFixed(3);
-    let lossPercent = ((100 * loseTally) / nSims).toFixed(3);
-    let drawPercent = ((100 * drawTally) / nSims).toFixed(3);
+    let EV = (winTally / nSims + 0.5 * (drawTally / nSims)).toFixed(2);
+    let winPercent = ((100 * winTally) / nSims).toFixed(2);
+    let lossPercent = ((100 * loseTally) / nSims).toFixed(2);
+    let drawPercent = ((100 * drawTally) / nSims).toFixed(2);
     return [EV, winPercent, lossPercent, drawPercent];
   }
 
@@ -262,7 +265,7 @@ export function battleTime(player, opponent) {
     let bestResult = [];
 
     for (let i = 0; i < combinations.length; i++) {
-     var boardSig = combinations[i];
+      var boardSig = combinations[i];
       // return format : [EV, winPercent, lossPercent, drawPercent]
       let result = simulateCombatsWithSeed(boardSig);
 
@@ -292,12 +295,12 @@ export function battleTime(player, opponent) {
       `Win: ${bestResult[1]}%, Loss: ${bestResult[2]}%, Draw: ${bestResult[3]}%`
     );
 
-    return bestResult;
+    return [bestResult, bestNameArray];
   }
 
-  // return permutationSimulations();
-  return simulateCombats();
-  // permutationSimulations();
+  if (flag) {
+    return permutationSimulations();
+  } else {
+    return simulateCombats();
+  }
 }
-
-

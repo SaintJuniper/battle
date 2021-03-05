@@ -12,22 +12,54 @@ export class AppComponent implements OnInit {
   player = [];
   opponent = [];
   results = [];
+  bestArrangements = [];
 
   ngOnInit() {
 
+  }
+
+  generateName(){
+    let randomNames = ["A", "B", "C", "X", "Y", "Z", "T"]
+    let i = Math.floor(Math.random() * randomNames.length);
+    let pickedName = randomNames[i]
+
+    function containedInNames(player, name){
+      let contained = false; 
+      for (let i = 0; i < player.length; i++){
+        if (player[i].name == name){
+          contained = true 
+        }
+      }
+      return contained
+    }
+
+    while (containedInNames(this.player, pickedName)){
+      i = Math.floor(Math.random() * randomNames.length);
+      pickedName = randomNames[i]
+    }
+
+    return pickedName
   }
 
   addPlayer() {
     if(this.isPlayerMax())
       return;
 
-    this.player.push({attack: 1, health: 1})
+    let name = this.generateName()
+
+    this.player.push({name: name,attack: 1, health: 1})
     console.log(this.player);
     this.resetCalc();
   }
 
   removePlayer() {
     this.player.pop();
+    console.log(this.player);
+    this.resetCalc();
+  }
+
+  removePlayerAtIndex(i) {
+    this.player.splice(i, 1);
     console.log(this.player);
     this.resetCalc();
   }
@@ -63,6 +95,12 @@ export class AppComponent implements OnInit {
     this.resetCalc();
   }
 
+  removeOpponentAtIndex(i) {
+    this.opponent.splice(i, 1);
+    console.log(this.opponent);
+    this.resetCalc();
+  }
+
   moveLeftOpponent(index) {
     var temp = this.opponent[index - 1];
     this.opponent[index - 1] = this.opponent[index];
@@ -88,11 +126,16 @@ export class AppComponent implements OnInit {
   }
 
   calculate() {
-    this.results = battleTime(this.player, this.opponent);
+    this.results = battleTime(this.player, this.opponent, 0);
     console.log(this.results);
+  }
+
+  calculateBestArrangement(){
+    this.bestArrangements = battleTime(this.player, this.opponent, 1);
   }
 
   resetCalc() {
     this.results = [];
+    this.bestArrangements = []
   }
 }

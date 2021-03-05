@@ -1,50 +1,62 @@
-<h1> Battle Simulator </h1>
+<h1>Battle Simulator</h1>
 
 <div>
   Opponent
-  <button (click)="removeOpponent()">x</button>
   <button *ngIf="!isOpponentMax()" (click)="addOpponent()">+</button>
 
   <table>
     <tr>
-      <td *ngFor="let x of opponent; let i = index"> 
-        Attack 
-        <input [(ngModel)]="x.attack">
-        <br> 
+      <td *ngFor="let x of opponent; let i = index">
+        <button (click)="removeOpponentAtIndex(i)">x</button>
+        Attack
+        <input [(ngModel)]="x.attack" />
+        <br />
         Health
-        <input [(ngModel)]="x.health">
-        <br>
+        <input [(ngModel)]="x.health" />
+        <br />
         <button *ngIf="i > 0" (click)="moveLeftOpponent(i)"><</button>
-        <button *ngIf="i < 6 && !isCurrentOpponentMax(i)" (click)="moveRightOpponent(i)">></button>
+        <button
+          *ngIf="i < 6 && !isCurrentOpponentMax(i)"
+          (click)="moveRightOpponent(i)"
+        >
+          >
+        </button>
       </td>
     </tr>
   </table>
 </div>
 
-<br>
+<br />
 
 <div>
   Player
-  <button (click)="removePlayer()">x</button>
   <button *ngIf="!isPlayerMax()" (click)="addPlayer()">+</button>
 
   <table>
     <tr>
-      <td *ngFor="let y of player; let i = index"> 
-        Attack 
-        <input [(ngModel)]="y.attack"> 
-        <br> 
-        Health 
-        <input [(ngModel)]="y.health">
-        <br>
+      <td *ngFor="let y of player; let i = index">
+        <button (click)="removePlayerAtIndex(i)">x</button>
+        Name
+        <input [(ngModel)]="y.name" />
+        Attack
+        <input [(ngModel)]="y.attack" />
+        <br />
+        Health
+        <input [(ngModel)]="y.health" />
+        <br />
         <button *ngIf="i > 0" (click)="moveLeftPlayer(i)"><</button>
-        <button *ngIf="i < 6 && !isCurrentPlayerMax(i)" (click)="moveRightPlayer(i)">></button>
+        <button
+          *ngIf="i < 6 && !isCurrentPlayerMax(i)"
+          (click)="moveRightPlayer(i)"
+        >
+          >
+        </button>
       </td>
     </tr>
   </table>
 </div>
 
-<br>
+<br />
 
 <div>
   <button (click)="calculate()">Calculate</button>
@@ -52,8 +64,25 @@
 
 <div>
   <div *ngIf="results.length > 0">
-    Win: <span>{{results[1] }} %</span> <br>
-    Loss: <span>{{results[2] }} %</span> <br>
-    Draw: <span>{{results[3] }} %</span> <br>
+    Win: <span>{{ results[1] }} %</span> <br />
+    Loss: <span>{{ results[2] }} %</span> <br />
+    Draw: <span>{{ results[3] }} %</span> <br />
+    Value: <span>{{ results[0] }} </span> <br />
+  </div>
+
+  <div>
+    <button (click)="calculateBestArrangement()">
+      Calculate Best Arrangement
+    </button>
+  </div>
+
+  <div>
+    <div *ngIf="bestArrangements.length > 0">
+      Best Ordering: <span>{{ bestArrangements[1] }}</span> <br />
+      Win: <span>{{ bestArrangements[0][1] }} %</span> <br />
+      Loss: <span>{{ bestArrangements[0][2] }} %</span> <br />
+      Draw: <span>{{ bestArrangements[0][3] }} %</span> <br />
+      Value: <span>{{ bestArrangements[0][0] }} </span> <br />
+    </div>
   </div>
 </div>
