@@ -10,12 +10,20 @@ function battle(playerMinions, enemyMinions, checkBestOrdering) {
   let playerTurn = 0;
   let numberOfSimulations = 1000;
 
-  function resetBoards() {
+  function resetBoards(seed) {
     playerCurrentBoard = [];
     enemyCurrentBoard = [];
 
-    for (let i = 0; i < playerMinions.length; i++) {
-      playerCurrentBoard[i] = JSON.parse(JSON.stringify(playerMinions[i]));
+    if (seed) {
+      for (let i = 0; i < playerMinions.length; i++) {
+        playerCurrentBoard[i] = JSON.parse(
+          JSON.stringify(playerMinions[seed[i]])
+        );
+      }
+    } else {
+      for (let i = 0; i < playerMinions.length; i++) {
+        playerCurrentBoard[i] = JSON.parse(JSON.stringify(playerMinions[i]));
+      }
     }
 
     for (let i = 0; i < enemyMinions.length; i++) {
@@ -36,7 +44,6 @@ function battle(playerMinions, enemyMinions, checkBestOrdering) {
   }
 
   function runCombat() {
-    resetBoards();
     playerTurn = Math.random() >= 0.5;
     while (bothAlive()) {
       if (playerTurn) {
@@ -123,12 +130,13 @@ function battle(playerMinions, enemyMinions, checkBestOrdering) {
     return ((100 * tally) / numberOfSimulations).toFixed(2);
   }
 
-  function simulateCombats() {
+  function simulateCombats(orderingSeed) {
     var winTally = 0;
     var lossTally = 0;
     var drawTally = 0;
 
     for (let i = 0; i < numberOfSimulations; i++) {
+      resetBoards(orderingSeed);
       runCombat();
 
       if (checkDraw()) {
@@ -152,8 +160,48 @@ function battle(playerMinions, enemyMinions, checkBestOrdering) {
     return [value, winPercentage, lossPercentage, drawPercentage];
   }
 
-  console.log(simulateCombats());
-  //   runCombat();
+  function generateAllPossibleOrderings(n) {
+    let combsArr = [];
+    let arrStart = [];
+    for (let i = 0; i < n; i++) {
+      arrStart[i] = i;
+    }
+    function combs(arr, build) {
+      if (arr.length > 0) {
+        for (let i = 0; i < arr.length; i++) {
+          let ele = arr[i];
+          let newArr = arr.filter((j) => j !== arr[i]);
+          combs(newArr, build.concat(ele));
+        }
+      } else {
+        combsArr.push(build);
+      }
+    }
+    combs(arrStart, []);
+    return combsArr;
+  }
+
+  function calculateBestBoardOrdering() {
+    let orderings = generateAllPossibleOrderings(playerMinions.length);
+
+    let highestValue = -1;
+    let bestOrdering = [];
+    let bestOrderingValue = [];
+    let bestResult = [];
+
+    for (let i = 0; i < orderings.length; i++) {
+      let currentOrdering = orderings[i];
+      results = simulateCombats(currentOrdering);
+      if (results[0] > bestOrderingValue) {
+        bestOrdering = currentOrdering;
+        bestOrderingValue = results[0];
+        bestResult = results;
+      }
+    }
+
+    return [bestResult, bestOrdering];
+  }
+  //   calculateBestBoardOrdering();
 }
 
 // Test data
@@ -170,5 +218,3 @@ let playerB = [
 ];
 
 battle(playerA, playerB, false);
-
-// todo: simulations, permutations, permutations simulations
