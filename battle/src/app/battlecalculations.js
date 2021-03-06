@@ -1,8 +1,4 @@
 export function battle(playerMinions, enemyMinions, checkBestOrdering) {
-  // player - array of minions
-  // opponent - array of minions
-  // flag - TRUE = permutation simulations, FALSE = single simulation
-
   var playerCurrentBoard = [];
   var enemyCurrentBoard = [];
   let indexOfPlayerAttacker = 0;
@@ -95,8 +91,37 @@ export function battle(playerMinions, enemyMinions, checkBestOrdering) {
     }
   }
 
+  function getTauntMinions(board) {
+    return board
+      .filter((minion) =>
+        minion.effects.some((attribute) => attribute.item_text == "Taunt")
+      )
+      .map((x) => board.indexOf(x));
+  }
+
+  function isMinionPoisonous(minion) {
+    return minion.effects.some(
+      (attribute) => attribute.item_text == "Poisonous"
+    );
+  }
+
+  function isMinionDivineShield(minion) {
+    return minion.effects.some(
+      (attribute) => attribute.item_text == "Divine Shield"
+    );
+  }
+
   function attack(attackerBoard, defenderBoard, indexOfAttacker) {
+    var indicesOfDefenderTauntMinions = getTauntMinions(defenderBoard);
+
     var indexOfDefender = Math.floor(Math.random() * defenderBoard.length);
+
+    if (indicesOfDefenderTauntMinions.length > 0) {
+      indexOfDefender =
+        indicesOfDefenderTauntMinions[
+          Math.floor(Math.random() * indicesOfDefenderTauntMinions.length)
+        ];
+    }
 
     var attackerAttack = attackerBoard[indexOfAttacker].attack;
     var attackerHealth = attackerBoard[indexOfAttacker].health;
@@ -104,8 +129,38 @@ export function battle(playerMinions, enemyMinions, checkBestOrdering) {
     var defenderAttack = defenderBoard[indexOfDefender].attack;
     var defenderHealth = defenderBoard[indexOfDefender].health;
 
-    inflictDamage(defenderBoard, indexOfDefender, attackerAttack);
-    inflictDamage(attackerBoard, indexOfAttacker, defenderAttack);
+    if (isMinionPoisonous(attackerBoard[indexOfAttacker])) {
+      attackerAttack = Number.POSITIVE_INFINITY;
+    }
+
+    if (isMinionPoisonous(defenderBoard[indexOfDefender])) {
+      defenderAttack = Number.POSITIVE_INFINITY;
+    }
+
+    let divineShieldAttackerFlag = false;
+    let divineShieldDefenderFlag = false;
+
+    if (isMinionDivineShield(attackerBoard[indexOfAttacker])) {
+      attackerBoard[indexOfAttacker].effects = attackerBoard[
+        indexOfAttacker
+      ].effects.filter((effect) => effect.item_text !== "Divine Shield");
+      divineShieldAttackerFlag = true;
+    }
+
+    if (isMinionDivineShield(defenderBoard[indexOfDefender])) {
+      defenderBoard[indexOfDefender].effects = defenderBoard[
+        indexOfDefender
+      ].effects.filter((effect) => effect.item_text !== "Divine Shield");
+      divineShieldDefenderFlag = true;
+    }
+
+    if (!divineShieldDefenderFlag) {
+      inflictDamage(defenderBoard, indexOfDefender, attackerAttack);
+    }
+
+    if (!divineShieldAttackerFlag) {
+      inflictDamage(attackerBoard, indexOfAttacker, defenderAttack);
+    }
   }
 
   function inflictDamage(recipientBoard, recipientIndex, damage) {
@@ -191,29 +246,38 @@ export function battle(playerMinions, enemyMinions, checkBestOrdering) {
 
     for (let i = 0; i < orderings.length; i++) {
       let currentOrdering = orderings[i];
-      results = simulateCombats(currentOrdering);
-      if (results[0] > bestOrderingValue) {
+      let results = simulateCombats(currentOrdering);
+      if (results[0] > highestValue) {
         bestOrdering = currentOrdering;
         bestOrderingValue = results[0];
         bestResult = results;
       }
     }
 
-    return [bestResult, bestOrdering];
+    // Name combination Best Array
+    let bestNameArray = [];
+
+    for (let i = 0; i < bestOrdering.length; i++) {
+      bestNameArray.push(playerMinions[bestOrdering[i]].name);
+    }
+
+    return [bestResult, bestNameArray];
   }
+
+  return checkBestOrdering ? calculateBestBoardOrdering() : simulateCombats();
 }
 
 // Test data
 
-let playerA = [
-  { attack: 1, health: 1 },
-  { attack: 2, health: 2 },
-  { attack: 3, health: 3 },
-];
-let playerB = [
-  { attack: 3, health: 3 },
-  { attack: 2, health: 2 },
-  { attack: 1, health: 1 },
-];
+// let playerA = [
+//   { attack: 1, health: 1 },
+//   { attack: 2, health: 2 },
+//   { attack: 3, health: 3 },
+// ];
+// let playerB = [
+//   { attack: 3, health: 3 },
+//   { attack: 2, health: 2 },
+//   { attack: 1, health: 1 },
+// ];
 
-battle(playerA, playerB, false);
+// battle(playerA, playerB, false);

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { battleTime } from './battle';
+import { battle } from './battleCalculations'
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 
 @Component({
@@ -164,12 +165,13 @@ export class AppComponent implements OnInit {
   }
 
   calculate() {
-    this.results = battleTime(this.player, this.opponent, 0);
+    this.results = battle(this.player, this.opponent, 0);
     console.log(this.results);
   }
 
   calculateBestArrangement(){
-    this.bestArrangements = battleTime(this.player, this.opponent, 1);
+    this.bestArrangements = battle(this.player, this.opponent, 1);
+    console.log(`bestArrangement: ${this.bestArrangements}`)
   }
 
   resetCalc() {
