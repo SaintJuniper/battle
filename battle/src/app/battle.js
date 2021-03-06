@@ -141,20 +141,22 @@ export function battleTime(player, opponent, flag) {
 
   function startCombat() {
     let turn = Math.random() >= 0.5;
-    let initA = 0;
-    let initB = 0;
+    let initA = -1;
+    let initB = -1;
 
     while (checkWin() > 1) {
       // printBoards();
 
       if (turn == true) {
+        initA = (initA + 1) % boardA.length;
         var enemyTargetIndex = Math.floor(Math.random() * boardB.length);
         fight(boardA, boardB, initA, enemyTargetIndex);
-        initA = (initA + 1) % boardA.length;
+        turn = !turn;
       } else {
+        initB = (initB + 1) % boardB.length;
         var enemyTargetIndex = Math.floor(Math.random() * boardA.length);
         fight(boardB, boardA, initB, enemyTargetIndex);
-        initB = (initB + 1) % boardB.length;
+        turn = !turn;
       }
     }
 
