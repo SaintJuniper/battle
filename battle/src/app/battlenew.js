@@ -8,6 +8,7 @@ function battle(playerMinions, enemyMinions, checkBestOrdering) {
   let indexOfPlayerAttacker = 0;
   let indexOfEnemyAttacker = 0;
   let playerTurn = 0;
+  let numberOfSimulations = 1000;
 
   function resetBoards() {
     playerCurrentBoard = [];
@@ -38,7 +39,6 @@ function battle(playerMinions, enemyMinions, checkBestOrdering) {
     resetBoards();
     playerTurn = Math.random() >= 0.5;
     while (bothAlive()) {
-      printBoards();
       if (playerTurn) {
         attack(playerCurrentBoard, enemyCurrentBoard, indexOfPlayerAttacker);
         incrementIndexOfPlayerAttacker();
@@ -49,9 +49,18 @@ function battle(playerMinions, enemyMinions, checkBestOrdering) {
 
       playerTurn = !playerTurn;
     }
+  }
 
-    // todo: check who wins and return it or a code of who wins
-    console.log(`combat finished`);
+  function checkPlayerWin() {
+    return playerCurrentBoard.length > 0 && enemyCurrentBoard.length == 0;
+  }
+
+  function checkPlayerLoss() {
+    return playerCurrentBoard.length == 0 && enemyCurrentBoard.length > 0;
+  }
+
+  function checkDraw() {
+    return playerCurrentBoard.length == 0 && enemyCurrentBoard.length == 0;
   }
 
   function incrementIndexOfPlayerAttacker() {
@@ -82,8 +91,6 @@ function battle(playerMinions, enemyMinions, checkBestOrdering) {
   function attack(attackerBoard, defenderBoard, indexOfAttacker) {
     var indexOfDefender = Math.floor(Math.random() * defenderBoard.length);
 
-    console.log(`AttackerBoard: ${attackerBoard}`);
-    console.log(`indexOfAttacker:  ${indexOfAttacker}`);
     var attackerAttack = attackerBoard[indexOfAttacker].attack;
     var attackerHealth = attackerBoard[indexOfAttacker].health;
 
@@ -111,20 +118,55 @@ function battle(playerMinions, enemyMinions, checkBestOrdering) {
   function bothAlive() {
     return playerCurrentBoard.length > 0 && enemyCurrentBoard.length > 0;
   }
-  runCombat();
+
+  function asPercentage(tally) {
+    return ((100 * tally) / numberOfSimulations).toFixed(2);
+  }
+
+  function simulateCombats() {
+    var winTally = 0;
+    var lossTally = 0;
+    var drawTally = 0;
+
+    for (let i = 0; i < numberOfSimulations; i++) {
+      runCombat();
+
+      if (checkDraw()) {
+        drawTally++;
+        continue;
+      }
+
+      if (checkPlayerWin()) {
+        winTally++;
+        continue;
+      }
+
+      lossTally++;
+    }
+
+    var value = (winTally - lossTally) / numberOfSimulations;
+    let winPercentage = asPercentage(winTally);
+    let lossPercentage = asPercentage(lossTally);
+    let drawPercentage = asPercentage(drawTally);
+
+    return [value, winPercentage, lossPercentage, drawPercentage];
+  }
+
+  console.log(simulateCombats());
+  //   runCombat();
 }
 
 // Test data
 
 let playerA = [
-  { attack: 1, health: 14 },
-  { attack: 2, health: 14 },
-  { attack: 1, health: 14 },
+  { attack: 1, health: 1 },
+  { attack: 2, health: 2 },
+  { attack: 3, health: 3 },
 ];
 let playerB = [
-  { attack: 1, health: 14 },
-  { attack: 2, health: 9 },
-  { attack: 1, health: 8 },
+  { attack: 3, health: 3 },
+  { attack: 2, health: 2 },
+  { attack: 1, health: 1 },
 ];
 
 battle(playerA, playerB, false);
