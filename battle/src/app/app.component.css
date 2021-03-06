@@ -14,8 +14,8 @@ table tr:nth-child(even) {
 }
 
 td {
-    width: 50px;
-    height: 100px;
+    width: 180px;
+    height: 60px;
 }
 
 input {
@@ -24,4 +24,9 @@ input {
 
 label {
     padding: 8px;
+}
+
+.dropDown {
+  width:150px;
+  height:150px;
 }

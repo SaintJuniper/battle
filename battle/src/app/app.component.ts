@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { battleTime } from './battle';
+import { IDropdownSettings } from 'ng-multiselect-dropdown';
 
 @Component({
   selector: 'app-root',
@@ -14,8 +15,36 @@ export class AppComponent implements OnInit {
   results = [];
   bestArrangements = [];
 
-  ngOnInit() {
+  dropdownList = [];
+  dropdownSettings:IDropdownSettings = {};
+  listOfEffects = [
+    { item_id: 1, item_text: 'Divine Shield' },
+    { item_id: 2, item_text: 'Poisonous' },
+    { item_id: 3, item_text: 'Reborn' },
+    { item_id: 4, item_text: 'Taunt' },
+    { item_id: 5, item_text: 'Windfury' }
+  ];
 
+  ngOnInit() {
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: 'item_id',
+      textField: 'item_text',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 5,
+      allowSearchFilter: false,
+      enableCheckAll: false
+    };
+    this.dropdownList = this.listOfEffects;
+  }
+
+  onItemSelect(item: any) {
+    console.log(item);
+  }
+
+  onSelectAll(items: any) {
+    console.log(items);
   }
 
   generateName(){
@@ -47,7 +76,12 @@ export class AppComponent implements OnInit {
 
     let name = this.generateName()
 
-    this.player.push({name: name,attack: 1, health: 1})
+    this.player.push(
+      { name: name,
+        attack: 1, 
+        health: 1,
+        effects: []
+      })
     console.log(this.player);
     this.resetCalc();
   }
@@ -68,7 +102,11 @@ export class AppComponent implements OnInit {
     if(this.isOpponentMax())
       return;
 
-    this.opponent.push({attack: 1, health: 1})
+    this.opponent.push(      
+    { attack: 1, 
+      health: 1,
+      effects: []
+    })
     console.log(this.opponent);
     this.resetCalc();
   }

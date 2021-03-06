@@ -7,13 +7,25 @@
   <table>
     <tr>
       <td *ngFor="let x of opponent; let i = index">
-        <button (click)="removeOpponentAtIndex(i)">x</button>
+        <button (click)="removeOpponentAtIndex(i)" class="delete">x</button>
+        <br>
         Attack
         <input [(ngModel)]="x.attack" />
         <br />
         Health
         <input [(ngModel)]="x.health" />
         <br />
+        <div class="dropDown">
+          <ng-multiselect-dropdown
+            [settings]="dropdownSettings"
+            [placeholder]="'Effects'"
+            [data]="dropdownList"
+            [(ngModel)]="opponent[i].effects"
+            (onSelect)="onItemSelect($event)"
+            (onSelectAll)="onSelectAll($event)"
+          >
+        </ng-multiselect-dropdown>
+        </div>
         <button *ngIf="i > 0" (click)="moveLeftOpponent(i)"><</button>
         <button
           *ngIf="i < 6 && !isCurrentOpponentMax(i)"
@@ -36,14 +48,27 @@
     <tr>
       <td *ngFor="let y of player; let i = index">
         <button (click)="removePlayerAtIndex(i)">x</button>
+        <br>
         Name
         <input [(ngModel)]="y.name" />
+        <br>
         Attack
         <input [(ngModel)]="y.attack" />
         <br />
         Health
         <input [(ngModel)]="y.health" />
         <br />
+        <div class="dropDown">
+          <ng-multiselect-dropdown
+            [settings]="dropdownSettings"
+            [placeholder]="'Effects'"
+            [data]="dropdownList"
+            [(ngModel)]="player[i].effects"
+            (onSelect)="onItemSelect($event)"
+            (onSelectAll)="onSelectAll($event)"
+          >
+        </ng-multiselect-dropdown>
+        </div>
         <button *ngIf="i > 0" (click)="moveLeftPlayer(i)"><</button>
         <button
           *ngIf="i < 6 && !isCurrentPlayerMax(i)"
