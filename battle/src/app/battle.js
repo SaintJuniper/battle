@@ -164,7 +164,7 @@ export function battleTime(player, opponent, flag) {
   }
 
   function simulateCombats() {
-    let nSims = 10000;
+    let nSims = 5000;
     let winTally = 0;
     let loseTally = 0;
     let drawTally = 0;
@@ -186,7 +186,8 @@ export function battleTime(player, opponent, flag) {
       }
     }
 
-    let EV = (winTally / nSims + 0.5 * (drawTally / nSims)).toFixed(2);
+    // let EV = (winTally / nSims + 0.5 * (drawTally / nSims)).toFixed(2);
+    let EV = (winTally / nSims - loseTally / nSims).toFixed(2);
     let winPercent = ((100 * winTally) / nSims).toFixed(2);
     let lossPercent = ((100 * loseTally) / nSims).toFixed(2);
     let drawPercent = ((100 * drawTally) / nSims).toFixed(2);
@@ -201,7 +202,7 @@ export function battleTime(player, opponent, flag) {
   }
 
   function simulateCombatsWithSeed(seed) {
-    let nSims = 1000;
+    let nSims = 5000;
     let winTally = 0;
     let loseTally = 0;
     let drawTally = 0;
@@ -223,7 +224,8 @@ export function battleTime(player, opponent, flag) {
       }
     }
 
-    let EV = (winTally / nSims + 0.5 * (drawTally / nSims)).toFixed(2);
+    let EV = (winTally / nSims - loseTally / nSims).toFixed(2);
+    // let EV = (winTally / nSims + 0.5 * (drawTally / nSims)).toFixed(2);
     let winPercent = ((100 * winTally) / nSims).toFixed(2);
     let lossPercent = ((100 * loseTally) / nSims).toFixed(2);
     let drawPercent = ((100 * drawTally) / nSims).toFixed(2);
